@@ -7,6 +7,11 @@ import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@herou
 import { useEffect, useMemo, useState } from "react";
 import { getTodos, addTodo, updateTodo, deleteTodo } from "./api/todo";
 
+type ValidationError = {
+  title?: string;
+  description?: string;
+};
+
 type Todo = {
   id: number;
   title: string;
@@ -23,6 +28,8 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalDescription, setModalDescription] = useState("");
+  const [errors, setErrors] = useState<ValidationError>({});
+  const [modalErrors, setModalErrors] = useState<ValidationError>({});
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -44,11 +51,37 @@ export default function Home() {
     setDescription("");
     setIsEditing(false);
     setEditingId(null);
+    setErrors({});
+  }
+
+  function validateForm(title: string, description: string): ValidationError {
+    const newErrors: ValidationError = {};
+    
+    if (!title.trim()) {
+      newErrors.title = "Title is required";
+    } else if (title.trim().length < 3) {
+      newErrors.title = "Title must be at least 3 characters";
+    } else if (title.trim().length > 100) {
+      newErrors.title = "Title must be less than 100 characters";
+    }
+    
+    if (description.trim() && description.trim().length > 500) {
+      newErrors.description = "Description must be less than 500 characters";
+    }
+    
+    return newErrors;
   }
 
  
   async function handleAddOrSave() {
-    if (!title.trim()) return;
+    const validationErrors = validateForm(title, description);
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    
+    setErrors({});
 
     if (isEditing && editingId !== null) {
       try {
@@ -112,11 +145,21 @@ export default function Home() {
     setModalDescription(todo.description);
     setEditingId(todo.id);
     setIsModalOpen(true);
+    setModalErrors({});
   }
 
   // ---------------- Save Modal Edit ----------------
   async function saveModalEdit() {
     if (editingId === null) return;
+    
+    const validationErrors = validateForm(modalTitle, modalDescription);
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setModalErrors(validationErrors);
+      return;
+    }
+    
+    setModalErrors({});
 
     try {
       const updatedTodo = {
@@ -145,13 +188,29 @@ export default function Home() {
               placeholder="Task title"
               size="lg"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (errors.title) {
+                  setErrors(prev => ({ ...prev, title: undefined }));
+                }
+              }}
+              isInvalid={!!errors.title}
+              errorMessage={errors.title}
+              maxLength={100}
             />
             <Input
               placeholder="Description (optional)"
               size="lg"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => {
+                setDescription(e.target.value);
+                if (errors.description) {
+                  setErrors(prev => ({ ...prev, description: undefined }));
+                }
+              }}
+              isInvalid={!!errors.description}
+              errorMessage={errors.description}
+              maxLength={500}
             />
             <Button color="primary" size="lg" onPress={handleAddOrSave}>
               {isEditing ? "Save" : "Add Task"}
@@ -196,13 +255,29 @@ export default function Home() {
                 placeholder="Task title"
                 size="lg"
                 value={modalTitle}
-                onChange={(e) => setModalTitle(e.target.value)}
+                onChange={(e) => {
+                  setModalTitle(e.target.value);
+                  if (modalErrors.title) {
+                    setModalErrors(prev => ({ ...prev, title: undefined }));
+                  }
+                }}
+                isInvalid={!!modalErrors.title}
+                errorMessage={modalErrors.title}
+                maxLength={100}
               />
               <Input
                 placeholder="Description (optional)"
                 size="lg"
                 value={modalDescription}
-                onChange={(e) => setModalDescription(e.target.value)}
+                onChange={(e) => {
+                  setModalDescription(e.target.value);
+                  if (modalErrors.description) {
+                    setModalErrors(prev => ({ ...prev, description: undefined }));
+                  }
+                }}
+                isInvalid={!!modalErrors.description}
+                errorMessage={modalErrors.description}
+                maxLength={500}
               />
             </div>
           </ModalBody>

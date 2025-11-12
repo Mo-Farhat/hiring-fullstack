@@ -5,7 +5,7 @@ import { Checkbox } from "@heroui/checkbox";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal";
 import { useEffect, useMemo, useState } from "react";
-import { getTodos, addTodo, updateTodo, deleteTodo } from "./api/todo";
+import { getTodos, addTodo, updateTodo, deleteTodo, toggleTodo } from "./api/todo";
 
 type ValidationError = {
   title?: string;
@@ -120,8 +120,7 @@ export default function Home() {
     if (!todo) return;
 
     try {
-      const updatedTodo = { ...todo, done: !todo.done };
-      const res = await updateTodo(id, updatedTodo); 
+      const res = await toggleTodo(id); 
       setTodos(prev => prev.map(t => t.id === id ? res.data.todo || res.data : t));
     } catch (error) {
       console.error("Failed to toggle todo:", error);

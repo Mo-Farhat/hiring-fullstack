@@ -45,6 +45,23 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+//Toggle todo done status
+router.patch('/:id/done', async (req, res) => {
+    try{
+        const {id} = req.params;
+        const toggleTodo = await pool.query('UPDATE todo SET done = NOT done WHERE id = $1 RETURNING *', [id]);
+        res.json(
+            {
+                message: 'Todo status toggled successfully',
+                todo: toggleTodo.rows[0]
+            }
+        );
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 //Delete todo
 router.delete('/:id', async (req, res) => {
     try{

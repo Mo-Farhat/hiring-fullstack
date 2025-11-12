@@ -1,53 +1,76 @@
-# Next.js & HeroUI Template
+## PLEASE NOTE VARIABLES ARE HARDCODED FOR EASE OF USE // SHOULD BE IN .ENV FILE IN PRODUCTION
 
-This is a template for creating applications using Next.js 14 (app directory) and HeroUI (v2).
+## Project Structure
 
-[Try it on CodeSandbox](https://githubbox.com/heroui-inc/heroui/next-app-template)
+```
+frontend/
+├── app/
+│   ├── page.tsx          # Main todo application component
+│   └── api/
+│       └── todo.ts       # API functions for todo operations
 
-## Technologies Used
 
-- [Next.js 14](https://nextjs.org/docs/getting-started)
-- [HeroUI v2](https://heroui.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
-
-## How to Use
-
-### Use the template with create-next-app
-
-To create a new project based on this template using `create-next-app`, run the following command:
-
-```bash
-npx create-next-app -e https://github.com/heroui-inc/next-app-template
 ```
 
-### Install dependencies
+## Getting Started
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+### Prerequisites
 
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd hiring-fullstack-todo/frontend
+```
+
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-### Run the development server
-
+3. Start the development server:
 ```bash
 npm run dev
 ```
 
-### Setup pnpm (optional)
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
+## Use this script for development
 
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
+- `npm run dev` - Start development server
 
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
 
-## License
+## API Integration
 
-Licensed under the [MIT license](https://github.com/heroui-inc/next-app-template/blob/main/LICENSE).
+The frontend communicates with a backend API through the following endpoints:
+
+- `GET /todos` - Fetch all todos
+- `POST /todos` - Create a new todo
+- `PUT /todos/:id` - Update a todo
+- `DELETE /todos/:id` - Delete a todo
+
+## Form Validation
+
+The application includes comprehensive form validation:
+
+### Title Field
+- Required field
+- Minimum 3 characters
+- Maximum 100 characters
+- Real-time validation feedback
+
+### Description Field
+- Optional field
+- Maximum 500 characters
+- Real-time validation feedback
+
+### Validation Features
+- Visual error states with red borders
+- Descriptive error messages
+- Error clearing on user input
+- Form submission blocking until validation passes
+
